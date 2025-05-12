@@ -5,7 +5,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Unity WebGL Player | FlappyTrump</title>
 
-    <!-- Twitter Embed Meta -->
     <meta name="twitter:card" content="player" />
     <meta name="twitter:site" content="@KshitijGajapure" />
     <meta name="twitter:title" content="Flappy Trump" />
@@ -71,7 +70,7 @@
 
       function resizeCanvasWithAspectRatio() {
         const aspect = 16 / 9;
-        const maxScale = 0.75; // Adjust this to balance quality vs. performance
+        const maxRenderScale = 0.75;
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
 
@@ -86,13 +85,18 @@
         canvas.style.width = width + "px";
         canvas.style.height = height + "px";
 
-        const scale = window.devicePixelRatio * maxScale;
-        canvas.width = width * scale;
-        canvas.height = height * scale;
+        const scale = maxRenderScale * window.devicePixelRatio;
+        canvas.width = Math.floor(width * scale);
+        canvas.height = Math.floor(height * scale);
       }
 
       window.addEventListener("resize", resizeCanvasWithAspectRatio);
-      window.addEventListener("focus", () => setTimeout(resizeCanvasWithAspectRatio, 100));
+      window.addEventListener("focus", () => {
+        setTimeout(() => {
+          resizeCanvasWithAspectRatio();
+          console.log("Canvas resized after focus");
+        }, 150);
+      });
 
       resizeCanvasWithAspectRatio();
 
