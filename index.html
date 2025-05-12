@@ -45,7 +45,6 @@
         max-height: 100%;
       }
 
-      /* Hide Unity logo and footer */
       #unity-logo,
       #unity-footer,
       #unity-webgl-logo,
@@ -91,11 +90,26 @@
       }
 
       window.addEventListener("resize", resizeCanvasWithAspectRatio);
+
+      // Final fix: Force canvas reset on focus
       window.addEventListener("focus", () => {
         setTimeout(() => {
+          canvas.style.display = "none";
+          void canvas.offsetHeight; // force reflow
+          canvas.style.display = "block";
           resizeCanvasWithAspectRatio();
-          console.log("Canvas resized after focus");
-        }, 150);
+          canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+
+          if (typeof unityInstance !== "undefined") {
+            try {
+              unityInstance.SendMessage("CanvasScaler", "ForceUpdate");
+            } catch (e) {
+              console.log("Unity message skipped:", e);
+            }
+          }
+
+          console.log("Canvas fully reset after focus");
+        }, 100);
       });
 
       resizeCanvasWithAspectRatio();
@@ -112,7 +126,7 @@
         streamingAssetsUrl: cloudflareCDN + "StreamingAssets",
         companyName: "X2C",
         productName: "FlappyTrump",
-        productVersion: "1.2.1",
+        productVersion: "1.2.2",
       };
 
       const script = document.createElement("script");
@@ -122,6 +136,7 @@
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
+          window.unityInstance = unityInstance;
         }).catch((message) => {
           alert(message);
         });
