@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Unity WebGL Player | FlappyTrump</title>
+
+    <!-- Twitter Embed Meta -->
+    <meta name="twitter:card" content="player" />
+    <meta name="twitter:site" content="@KshitijGajapure" />
+    <meta name="twitter:title" content="Flappy Trump" />
+    <meta name="twitter:description" content="Play Flappy Trump!" />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/Kshitij08/FlappyTrumpMonad/main/Flappy%20Trump%20Icon.png" />
+    <meta name="twitter:player" content="https://flappy-trump-beta.vercel.app/" />
+    <meta name="twitter:player:width" content="466" />
+    <meta name="twitter:player:height" content="262" />
+
+    <link rel="shortcut icon" href="TemplateData/favicon.ico" />
+    <link rel="stylesheet" href="TemplateData/style.css" />
+
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background-color: black;
+      }
+
+      #unity-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: black;
+      }
+
+      canvas {
+        display: block;
+        background: #000;
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      /* Hide Unity logo and footer */
+      #unity-logo,
+      #unity-footer,
+      #unity-webgl-logo,
+      #unity-build-title {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unity-wrapper">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+    <div id="unity-loading-bar">
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
+      </div>
+    </div>
+    <div id="unity-warning"></div>
+
+    <script>
+      const canvas = document.querySelector("#unity-canvas");
+
+      function resizeCanvasWithAspectRatio() {
+        const aspect = 16 / 9;
+        const maxScale = 0.75; // Adjust this to balance quality vs. performance
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        let width = windowWidth;
+        let height = width / aspect;
+
+        if (height > windowHeight) {
+          height = windowHeight;
+          width = height * aspect;
+        }
+
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        const scale = window.devicePixelRatio * maxScale;
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+      }
+
+      window.addEventListener("resize", resizeCanvasWithAspectRatio);
+      window.addEventListener("focus", () => setTimeout(resizeCanvasWithAspectRatio, 100));
+
+      resizeCanvasWithAspectRatio();
+
+      const loadingBar = document.querySelector("#unity-loading-bar");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+
+      const cloudflareCDN = "https://cdn.x2c.digital/";
+      const loaderUrl = cloudflareCDN + "Flappy%20Trump.loader.js";
+      const config = {
+        dataUrl: cloudflareCDN + "Flappy%20Trump.data.unityweb",
+        frameworkUrl: cloudflareCDN + "Flappy%20Trump.framework.js.unityweb",
+        codeUrl: cloudflareCDN + "Flappy%20Trump.wasm.unityweb",
+        streamingAssetsUrl: cloudflareCDN + "StreamingAssets",
+        companyName: "X2C",
+        productName: "FlappyTrump",
+        productVersion: "1.2.1",
+      };
+
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
