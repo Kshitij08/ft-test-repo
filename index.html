@@ -45,7 +45,11 @@
         max-height: 100%;
       }
 
-      #unity-logo, #unity-footer, #unity-webgl-logo, #unity-build-title, #unity-fullscreen-button {
+      #unity-footer,
+      #unity-logo,
+      #unity-webgl-logo,
+      #unity-fullscreen-button,
+      #unity-build-title {
         display: none !important;
       }
     </style>
@@ -55,6 +59,7 @@
       <canvas id="unity-canvas" tabindex="-1"></canvas>
     </div>
     <div id="unity-loading-bar">
+      <div id="unity-logo"></div>
       <div id="unity-progress-bar-empty">
         <div id="unity-progress-bar-full"></div>
       </div>
@@ -91,7 +96,7 @@
       const progressBarFull = document.querySelector("#unity-progress-bar-full");
 
       const cloudflareCDN = "https://cdn.x2c.digital/";
-      const version = "1.2.2"; // Change this on every new deployment
+      const version = "1.2.3";
 
       const loaderUrl = `${cloudflareCDN}Flappy%20Trump.loader.js?v=${version}`;
       const config = {
